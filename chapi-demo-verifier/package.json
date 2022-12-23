@@ -1,0 +1,28 @@
+{
+  "name": "chapi-demo-verifier",
+  "version": "2.0.2",
+  "description": "Credential Handler API Demo verifier",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/credential-handler/chapi-demo-verifier.git"
+  },
+  "author": {
+    "name": "Digital Bazaar, Inc.",
+    "email": "support@digitalbazaar.com",
+    "url": "http://digitalbazaar.com"
+  },
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/credential-handler/chapi-demo-verifier/issues"
+  },
+  "homepage": "https://github.com/credential-handler/chapi-demo-verifier",
+  "dependencies": {},
+  "devDependencies": {
+    "http-server": "^0.12.3"
+  },
+  "files": [],
+  "scripts": {
+    "start": "http-server . -S --cors -p 8083"
+  }
+}
