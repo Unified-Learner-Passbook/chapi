@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Minimal Dev Wallet - Worker</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://unpkg.com/credential-handler-polyfill@3.0.0/dist/credential-handler-polyfill.min.js"></script>
+  <script src="https://unpkg.com/web-credential-handler@2.0.0/dist/web-credential-handler.min.js"></script>
+  <script src="config.js"></script>
+</head>
+<body>
+
+<script>
+  async function activateWalletEventHandler() {
+    try {
+      await credentialHandlerPolyfill.loadOnce(MEDIATOR);
+    } catch(e) {
+      console.error('Error in loadOnce:', e);
+    }
+
+    console.log('Worker Polyfill loaded, mediator:', MEDIATOR);
+
+    return WebCredentialHandler.activateHandler({
+      mediatorOrigin: MEDIATOR,
+      async get(event) {
+        console.log('WCH: Received get() event:', event);
+        return {type: 'redirect', url: WALLET_LOCATION + 'wallet-ui-get.html'};
+      },
+      async store(event) {
+        console.log('WCH: Received store() event:', event);
+        return {type: 'redirect', url: WALLET_LOCATION + 'wallet-ui-store.html'};
+      }
+    })
+  }
+
+  console.log('worker.html: Activating handler, WALLET_LOCATION:', WALLET_LOCATION);
+  activateWalletEventHandler();
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+* {
+  margin: 1px;
+  padding: 0;
+  box-sizing: border-box;
+}
+.outer-border {
+  width: 70vw;
+  /* height: 100vh; */
+  padding: 10px;
+  text-align: center;
+  border: 10px solid #252f50;
+  font-family: "Lato", sans-serif;
+  margin: auto;
+}
+
+.inner-dotted-border {
+  padding: 10px;
+  text-align: center;
+  border: 2px solid #252f50;
+  /* border-style: dotted; */
+}
+
+.logo {
+  width: 75px;
+}
+
+.certification {
+  font-size: 50px;
+  font-weight: bold;
+  color: #252f50;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.certify {
+  font-size: 20px;
+  color: #252f50;
+}
+
+.diploma {
+  color: #252f50;
+  font-family: "Lucida Handwriting", "Comic Sans", cursive;
+}
+
+.name {
+  font-size: 30px;
+  color: #252f50;
+  border-bottom: 1px solid;
+  font-family: "Lucida Handwriting", "Comic Sans", cursive;
+}
+
+.thank {
+  color: #252f50;
+}
+.fs-30 {
+  font-size: 30px;
+}
+
+.fs-20 {
+  font-size: 20px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 4rem;
+}
+
+.date {
+  display: flex;
+  align-self: flex-end;
+}
+
+.date > .fs-20 {
+  font-family: "Lucida Handwriting", "Comic Sans", cursive;
+}
+
+.qr {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: end;
+  margin-left: 0.75rem;
+  margin-right: 0.75rem;
+}
+
+.sign {
+  border-top: 1px solid;
+  align-self: flex-end;
+}

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Issuer</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="app.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+    <!-- Import Google Icon Font -->
+    <!-- <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    /> -->
+
+    <!-- Compiled and minified Materialize JS/CSS -->
+    <!-- <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    /> -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!--Credential Handler API Polyfill-->
+    <script src="https://unpkg.com/credential-handler-polyfill@3.0.2/dist/credential-handler-polyfill.min.js"></script>
+    <script src="config.js"></script>
+  </head>
+  <body style="background-color: #d7e9ff; font-family: 'Lato', sans-serif">
+    <div class="flex flex-col justify-center items-center min-h-screen">
+      <div class="bg-white bg-opacity-70 rounded p-10 max-w-[70vw]">
+        <img src="./christ.jpg" class="w-[200px] mx-auto mb-8" />
+        <h1 class="text-5xl font-bold text-center mt-5">Christ University</h1>
+        <p class="mt-8 text-center">
+          CHRIST (Deemed to be University) was born out of the educational
+          vision of St Kuriakose Elias Chavara, an educationalist and social
+          reformer of the nineteenth century in South India. He founded the
+          first Catholic indigenous congregation, Carmelites of Mary Immaculate
+          (CMI), in 1831 which administers CHRIST (Deemed to be University).
+        </p>
+        <button
+          id="receiveButton"
+          class="bg-blue-800 hover:bg-blue-900 text-white font-medium pt-1 pb-2 px-4 rounded focus:outline-none focus:shadow-outline mb-5 mt-10 w-full text-lg"
+        >
+          Issue a Credential
+        </button>
+        <div class="card-panel hide" id="resultsPanel">
+          <pre><div id="storeResults"></div></pre>
+        </div>
+      </div>
+    </div>
+    <script>
+      const testCredential = {
+        "@context": [
+          "https://www.w3.org/2018/credentials/v1",
+          "https://www.w3.org/2018/credentials/examples/v1",
+        ],
+        id: "http://example.edu/credentials/1872",
+        type: ["VerifiableCredential", "UniversityDegreeCredential"],
+        issuer: "https://example.edu/issuers/565049",
+        issuanceDate: "2010-01-01T19:53:24Z",
+        credentialSubject: {
+          id: "did:example:ebfeb1f712ebc6f1c276e12ec21",
+          alumniOf: {
+            id: "did:example:c276e12ec21ebfeb1f712ebc6f1",
+            name: {
+              "@value": "Christ University",
+              "@language": "en",
+            },
+          },
+        },
+        proof: {
+          type: "Ed25519Signature2018",
+          created: "2017-06-18T21:19:10Z",
+          proofPurpose: "assertionMethod",
+          verificationMethod: "https://example.edu/issuers/keys/1",
+          jws: "eyJhbGciOiJSUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..TCYt5XsITJX1CxPCT8yAV-TVkIEq_PbChOMqsLfRoPsnsgw5WEuts01mq-pQy7UJiN5mgRxD-WUcX16dUEMGlv50aqzpqh4Qktb3rk-BuQy72IFLOqV0G_zS245-kronKb78cPN25DGlcTwLtjPAYuNzVBAh4vGHSrQyHUdBBPM",
+        },
+      };
+
+      const testPresentation = {
+        "@context": [
+          "https://www.w3.org/2018/credentials/v1",
+          "https://www.w3.org/2018/credentials/examples/v1",
+        ],
+        type: "VerifiablePresentation",
+        verifiableCredential: [testCredential],
+      };
+      // ^ Note that:
+      // 1. The Verifiable Credential is signed, and wrapped in a VerifiablePresentation.
+      // 2. The wrapping VerifiablePresentation is not signed.
+
+      async function onClickReceive() {
+        // document.getElementById('storeResults').innerHTML = ''; // clear results
+
+        // Construct the WebCredential wrapper around the credential to be stored
+        const credentialType = "VerifiablePresentation";
+        const webCredentialWrapper = new WebCredential(
+          credentialType,
+          testPresentation,
+          {
+            recommendedHandlerOrigins: ["https://wallet.example.chapi.io/"],
+          }
+        );
+
+        console.log(webCredentialWrapper);
+        document.getElementById("storeResults").innerText =
+          "Storing credential...";
+
+        // await navigator.credentials.store(webCredentialWrapper);
+        // Use Credential Handler API to store
+        const result = webCredentialWrapper?.data;
+        console.log({ result });
+
+        document.getElementById("resultsPanel").classList.remove("hide");        
+
+        // for(let i = 0; i < 10000000; i++);
+        window.location.href = "https://192.168.43.171:8082/mail.html";
+
+        console.log("Result of receiving via store() request:", result);
+        //
+        // if(!result) {
+        //   document.getElementById('storeResults').innerHTML = 'null result';
+        //   return;
+        // }
+
+        // document.getElementById('storeResults').innerHTML = JSON.stringify(result.data, null, 2);
+      }
+
+      function ready(fn) {
+        if (document.readyState !== "loading") {
+          fn();
+        } else {
+          document.addEventListener("DOMContentLoaded", fn);
+        }
+      }
+
+      ready(() => {
+        document
+          .getElementById("receiveButton")
+          .addEventListener("click", onClickReceive);
+        console.log("Document ready.");
+      });
+
+      credentialHandlerPolyfill
+        .loadOnce(MEDIATOR)
+        .then(console.log("Polyfill loaded."))
+        .catch((e) => console.error("Error loading polyfill:", e));
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  </body>
+</html>

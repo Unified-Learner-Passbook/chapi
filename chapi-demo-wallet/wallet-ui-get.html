@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Minimal Dev Wallet - Wallet Get UI</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!--Import Google Icon Font-->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- Compiled and minified Materialize JS/CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+  <script src="https://unpkg.com/credential-handler-polyfill@3.0.0/dist/credential-handler-polyfill.min.js"></script>
+  <script src="https://unpkg.com/web-credential-handler@2.0.0/dist/web-credential-handler.min.js"></script>
+
+  <script src="config.js"></script>
+  <script src="js-helpers.js"></script>
+  <script src="mock-user-management.js"></script>
+
+  <!--Simple cookie lib-->
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
+</head>
+<body style="background-color: lightblue;">
+
+<div class="container">
+  <h1>Learner Application</h1>
+
+  <div class="card-panel hide" id="logged-in">
+    <div id="confirm">
+      <p>Origin <span id="requestOrigin"></span> is requesting information:</p>
+
+      <p><span id="requestReason"></span></p>
+    </div>
+
+    <div id="userArea">
+      <p><strong>Logged in:</strong> <span id="username"></span></p>
+      <a class="waves-effect waves-light btn-small" style="background-color: darkblue;" id="logoutButton">Reset and Logout</a>
+
+      <h6>Wallet Contents:</h6>
+      <ol id="walletContents"></ol>
+    </div>
+  </div>
+
+  <div class="card-panel hide" id="logged-out">
+    <p>
+      In order to share a credential with the requesting party:
+    </p>
+
+    <ol>
+      <li>Register a wallet with your browser (for example,
+        the <a href="https://wallet.example.chapi.io/">Demo Wallet</a>).</li>
+      <li>Click the <strong>Login</strong> button.</li>
+      <li>Click on a Share button next to an appropriate credential.</li>
+    </ol>
+
+    <a class="waves-effect waves-light btn" style="background-color: darkblue;" id="loginButton">Login</a>
+  </div>
+</div>
+
+<script>
+  /**
+   * Globals:
+   *  * credentialHandlerPolyfill - from credential-handler-polyfill.min.js.
+   *      This provides the get() and store() Credential Handler API calls.
+   *
+   *  * WebCredentialHandler - from web-credential-handler.min.js.
+   *      Utility/convenience library for the CHAPI polyfill, useful for wallet
+   *      implementors.
+   *
+   *  * Persistence and user management - ./mock-user-management.js
+   */
+
+  async function handleGetEvent() {
+    const event = await WebCredentialHandler.receiveCredentialEvent();
+
+    console.log('Wallet processing get() event:', event);
+
+    document.getElementById('requestOrigin').innerHTML = event.credentialRequestOrigin;
+
+    const vp = event.credentialRequestOptions.web.VerifiablePresentation;
+    const query = Array.isArray(vp.query) ? vp.query[0] : vp.query;
+
+    if(!query.type === 'QueryByExample') {
+      throw new Error('Only QueryByExample requests are supported in demo wallet.');
+    }
+
+    const requestReason = query.credentialQuery.reason;
+    document.getElementById('requestReason').innerHTML = requestReason;
+
+    refreshUserArea({
+      shareButton: {
+        text: 'Share',
+        sourceEvent: event
+      }
+    });
+
+    // const requestOptions = event.credentialRequestOptions || {web:{}};
+    // document.getElementById('queryContents').innerHTML = JSON.stringify(requestOptions.web, null, 2);
+
+    // Respond button
+    // document.getElementById('respondBtn').addEventListener('click', () => {
+    //   const data = JSON.parse(document.getElementById('responseText').value);
+    //
+    //   event.respondWith(Promise.resolve({dataType: 'VerifiablePresentation', data}));
+    // });
+
+    // Cancel button
+    // document.getElementById('cancelBtn').addEventListener('click', () => {
+    //   event.respondWith(Promise.resolve({dataType: 'Response', data: 'error'}))
+    // });
+  }
+
+  onDocumentReady(() => {
+    // document.getElementById('loginButton').addEventListener('click', login);
+    document.getElementById('logoutButton').addEventListener('click', logout);
+  })
+
+  credentialHandlerPolyfill
+    .loadOnce(MEDIATOR)
+    .then(handleGetEvent);
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>
